@@ -35,8 +35,8 @@ public enum MessageCode {
     EXCEPTION_REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "3005"),
     EXCEPTION_EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "3006");
 
-    private HttpStatus httpStatus;
-    private String code;
+    private final HttpStatus httpStatus;
+    private final String code;
 
     public static Optional<MessageCode> get(String name) {
         return Arrays.stream(MessageCode.values())

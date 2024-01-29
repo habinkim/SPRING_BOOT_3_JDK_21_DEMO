@@ -1,4 +1,4 @@
-package com.habin.demo.account.adapter.output.security.filter;
+package com.habin.demo.common.filter;
 
 import com.habin.demo.common.config.Uris;
 import com.habin.demo.common.util.JwtUtil;
@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Optional;
 
 @Slf4j
-@Profile("!dev")
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {

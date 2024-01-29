@@ -1,10 +1,9 @@
 package com.habin.demo.common.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.habin.demo.account.adapter.output.persistence.AccessToken;
-import com.habin.demo.account.adapter.output.persistence.JwtToken;
-import com.habin.demo.account.adapter.output.persistence.RefreshToken;
-import com.habin.demo.common.util.StringUtil;
+import com.habin.demo.account.adapter.output.persistence.jwt.AccessToken;
+import com.habin.demo.account.adapter.output.persistence.jwt.JwtToken;
+import com.habin.demo.account.adapter.output.persistence.jwt.RefreshToken;
 import io.lettuce.core.RedisURI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

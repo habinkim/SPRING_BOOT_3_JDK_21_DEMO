@@ -1,4 +1,4 @@
-package com.habin.demo.account.adapter.output.security.domain;
+package com.habin.demo.account.domain;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 

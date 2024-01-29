@@ -11,4 +11,13 @@ public class Uris {
 
     };
 
+    public static final String[] ADMIN_URIS = {
+
+    };
+
+    public static final String[] NOT_LOGGING_URIS = {
+
+    };
+
+
 }

@@ -1,8 +1,8 @@
 package com.habin.demo.common.util;
 
-import com.habin.demo.account.adapter.output.persistence.AccessToken;
-import com.habin.demo.account.adapter.output.persistence.JwtToken;
-import com.habin.demo.account.adapter.output.persistence.RefreshToken;
+import com.habin.demo.account.adapter.output.persistence.jwt.AccessToken;
+import com.habin.demo.account.adapter.output.persistence.jwt.JwtToken;
+import com.habin.demo.account.adapter.output.persistence.jwt.RefreshToken;
 import com.habin.demo.common.exception.CommonApplicationException;
 import com.habin.demo.common.property.JwtProperty;
 import com.habin.demo.common.response.MessageCode;
