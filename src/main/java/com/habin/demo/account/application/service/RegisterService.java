@@ -1,7 +1,7 @@
 package com.habin.demo.account.application.service;
 
-import com.habin.demo.account.application.port.input.usecase.jwt.command.AccountCommands;
-import com.habin.demo.account.application.port.input.usecase.jwt.usecase.RegisterUseCase;
+import com.habin.demo.account.application.port.input.command.AccountCommands;
+import com.habin.demo.account.application.port.input.usecase.RegisterUseCase;
 import com.habin.demo.account.application.port.output.LoadAccountPort;
 import com.habin.demo.account.application.port.output.SaveAccountPort;
 import com.habin.demo.account.application.port.output.jwt.CreateAccessTokenPort;

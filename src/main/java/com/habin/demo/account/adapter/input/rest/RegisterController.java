@@ -1,7 +1,7 @@
 package com.habin.demo.account.adapter.input.rest;
 
-import com.habin.demo.account.application.port.input.usecase.jwt.command.AccountCommands;
-import com.habin.demo.account.application.port.input.usecase.jwt.usecase.RegisterUseCase;
+import com.habin.demo.account.application.port.input.command.AccountCommands;
+import com.habin.demo.account.application.port.input.usecase.RegisterUseCase;
 import com.habin.demo.account.domain.state.RegisterResult;
 import com.habin.demo.common.config.Uris;
 import com.habin.demo.common.hexagon.WebAdapter;

@@ -1,4 +1,4 @@
-package com.habin.demo.account.application.port.input.usecase.jwt.command;
+package com.habin.demo.account.application.port.input.command;
 
 import jakarta.validation.constraints.NotBlank;
 
@@ -13,6 +13,15 @@ public class AccountCommands {
             String email,
             @NotBlank
             String nickname
+    ) {
+
+    }
+
+    public record Login(
+            @NotBlank
+            String username,
+            @NotBlank
+            String password
     ) {
 
     }

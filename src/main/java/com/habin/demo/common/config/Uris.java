@@ -8,6 +8,7 @@ public class Uris {
     public static final String REST_NAME_UUID = "/{uuid}";
 
     public static final String REGISTER = API_V1_ROOT + "/register";
+    public static final String LOGIN = API_V1_ROOT + "/login";
 
     public static final String[] PERMIT_ALL_URIS = {
         REGISTER

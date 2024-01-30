@@ -1,6 +1,6 @@
-package com.habin.demo.account.application.port.input.usecase.jwt.usecase;
+package com.habin.demo.account.application.port.input.usecase;
 
-import com.habin.demo.account.application.port.input.usecase.jwt.command.AccountCommands;
+import com.habin.demo.account.application.port.input.command.AccountCommands;
 import com.habin.demo.account.domain.state.RegisterResult;
 
 public interface RegisterUseCase {

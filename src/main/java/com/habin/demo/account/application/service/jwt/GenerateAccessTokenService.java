@@ -1,6 +1,6 @@
 package com.habin.demo.account.application.service.jwt;
 
-import com.habin.demo.account.application.port.input.usecase.jwt.usecase.jwt.GenerateAccessTokenUseCase;
+import com.habin.demo.account.application.port.input.usecase.jwt.GenerateAccessTokenUseCase;
 import com.habin.demo.account.application.port.output.jwt.CreateAccessTokenPort;
 import com.habin.demo.account.domain.behavior.SaveJwtToken;
 import com.habin.demo.common.hexagon.UseCase;

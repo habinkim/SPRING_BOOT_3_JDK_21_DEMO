@@ -1,7 +1,7 @@
 package com.habin.demo.account.adapter.input.security;
 
 import com.habin.demo.account.application.port.input.usecase.jwt.LoadUsernameFromTokenUseCase;
-import com.habin.demo.account.application.port.input.usecase.jwt.usecase.jwt.ValidateAccessTokenUseCase;
+import com.habin.demo.account.application.port.input.usecase.jwt.ValidateAccessTokenUseCase;
 import com.habin.demo.common.config.Uris;
 import com.habin.demo.common.exception.CommonApplicationException;
 import com.habin.demo.common.response.ExceptionResponse;
