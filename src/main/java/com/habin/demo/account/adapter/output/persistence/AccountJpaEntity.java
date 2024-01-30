@@ -106,4 +106,8 @@ public class AccountJpaEntity extends BaseEntity implements UserDetails {
         return isEnabled;
     }
 
+    public boolean isAvailable() {
+        return !isAccountNonExpired && !isAccountNonLocked && !isCredentialsNonExpired && !isEnabled;
+    }
+
 }

@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 @AllArgsConstructor
 public enum Role implements GrantedAuthority {
 
-    CLIENT_0("ROLE_CLIENT_0z"),
+    CLIENT_0("ROLE_CLIENT_0"),
     ARTIST("ROLE_ARTIST"),
     ADMIN("ROLE_ADMIN");
 

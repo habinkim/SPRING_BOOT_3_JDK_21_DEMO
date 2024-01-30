@@ -8,8 +8,12 @@ import io.lettuce.core.RedisURI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -18,19 +22,22 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.time.Duration;
+
+import static org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair.fromSerializer;
+
 @Slf4j
 @Configuration
-@EnableRedisRepositories
+@EnableCaching
 @RequiredArgsConstructor
-@EnableTransactionManagement
 public class RedisConfig {
 
-    private static final String MAX_MEMORY_SETTING = "maxmemory 128M";
     private final RedisProperties redisProperties;
 
     @Bean
@@ -53,12 +60,16 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, JwtToken> jwtTokenRedisTemplate() throws JsonProcessingException {
-        RedisTemplate<String, JwtToken> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(JwtToken.class));
-        return redisTemplate;
+    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                .serializeValuesWith(fromSerializer(new GenericJackson2JsonRedisSerializer()))
+                .prefixCacheNameWith("Cache_")
+                .entryTtl(Duration.ofMinutes(30));
+
+        return RedisCacheManager.RedisCacheManagerBuilder
+                .fromConnectionFactory(redisConnectionFactory)
+                .cacheDefaults(redisCacheConfiguration)
+                .build();
     }
 
     @Bean
@@ -93,11 +104,6 @@ public class RedisConfig {
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         return redisTemplate;
-    }
-
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-        return new JpaTransactionManager();
     }
 
 }

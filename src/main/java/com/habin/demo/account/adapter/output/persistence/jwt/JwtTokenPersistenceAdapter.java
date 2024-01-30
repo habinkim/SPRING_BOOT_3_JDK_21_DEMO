@@ -8,6 +8,7 @@ import com.habin.demo.common.property.JwtProperty;
 import com.habin.demo.common.response.MessageCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ public class JwtTokenPersistenceAdapter implements
         CheckAccessTokenExpirePort, CheckRefreshTokenExpirePort,
         UpdateAccessTokenExpirePort, UpdateRefreshTokenExpirePort,
         DeleteAccessTokenPort, DeleteRefreshTokenPort,
+        ReissueAccessTokenPort,
         InitializingBean {
 
     private static final String ACCESS_TOKEN_KEY_PREFIX = "access_";
@@ -62,11 +64,7 @@ public class JwtTokenPersistenceAdapter implements
     @Override // ValidateJwtTokenPort
     public Boolean validate(String token) {
         try {
-            Jwts.parser().verifyWith(secretKey)
-                    .sig().add(Jwts.SIG.HS512)
-                    .and()
-                    .build()
-                    .parseSignedClaims(token);
+            getJwtParser().parseSignedClaims(token);
             return true;
         } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty: {}", e.getMessage());
@@ -83,7 +81,7 @@ public class JwtTokenPersistenceAdapter implements
         ValueOperations<String, AccessToken> operations = redisTemplateAccess.opsForValue();
         AccessToken buildAccessToken = new AccessToken(saveJwtToken.username(), tokenValue);
 
-        String accessTokenKey = ACCESS_TOKEN_KEY_PREFIX + saveJwtToken.username();
+        String accessTokenKey = getAccessTokenKey(saveJwtToken.username());
         operations.set(accessTokenKey, buildAccessToken);
         redisTemplateAccess.expireAt(accessTokenKey, expireDate);
 
@@ -99,7 +97,7 @@ public class JwtTokenPersistenceAdapter implements
         ValueOperations<String, RefreshToken> operations = redisTemplateRefresh.opsForValue();
         RefreshToken buildRefreshToken = new RefreshToken(saveJwtToken.username(), tokenValue);
 
-        String refreshTokenKey = REFRESH_TOKEN_KEY_PREFIX + saveJwtToken.username();
+        String refreshTokenKey = getRefreshTokenKey(saveJwtToken.username());
         operations.set(refreshTokenKey, buildRefreshToken);
         redisTemplateRefresh.expireAt(refreshTokenKey, expireDate);
 
@@ -114,7 +112,8 @@ public class JwtTokenPersistenceAdapter implements
 
     @Override // CheckRefreshTokenExpirePort
     public Boolean isRefreshTokenExpired(final String refreshToken) {
-        return validateJwtExpiration(refreshToken, redisTemplateRefresh);
+        String username = loadUsernameByToken(refreshToken);
+        return validateJwtExpiration(REFRESH_TOKEN_KEY_PREFIX + username, redisTemplateRefresh);
     }
 
     @Override // UpdateAccessTokenExpirePort
@@ -124,7 +123,7 @@ public class JwtTokenPersistenceAdapter implements
 
     @Override // UpdateRefreshTokenExpirePort
     public void updateRefreshTokenExpire(final String username, final Date expireDate) {
-        redisTemplateRefresh.expireAt(getRefreshTokenKeyPrefix(username), expireDate);
+        redisTemplateRefresh.expireAt(getRefreshTokenKey(username), expireDate);
     }
 
     @Override // DeleteAccessTokenPort
@@ -141,6 +140,25 @@ public class JwtTokenPersistenceAdapter implements
     @Override // DeleteRefreshTokenPort
     public void deleteRefreshToken(String accessToken) {
         redisTemplateRefresh.delete(REFRESH_TOKEN_KEY_PREFIX + loadUsernameByTokenSkipException(accessToken));
+    }
+
+    @Override // ReissueAccessTokenPort
+    public String reissueAccessToken(String refreshTokenValue) {
+        String username = loadUsernameByToken(refreshTokenValue);
+        String refreshTokenKey = getRefreshTokenKey(username);
+
+        RefreshToken refreshToken = redisTemplateRefresh.opsForValue().get(refreshTokenKey);
+
+        isRefreshTokenExpired(refreshTokenValue);
+
+        if (refreshToken == null && refreshToken.getToken().equals(refreshTokenValue))
+            throw new CommonApplicationException(MessageCode.EXCEPTION_AUTHENTICATION_INVALID_TOKEN);
+
+        if (isRefreshTokenExpired(refreshToken.getToken()))
+            throw new CommonApplicationException(MessageCode.EXCEPTION_EXPIRED_REFRESH_TOKEN);
+
+        SaveJwtToken behavior = new SaveJwtToken(username, getPayload(refreshTokenKey).get("role").toString());
+        return createAccessToken(behavior);
     }
 
     private String buildJwts(SaveJwtToken saveJwtToken, Date now, Date expireDate) {
@@ -182,21 +200,24 @@ public class JwtTokenPersistenceAdapter implements
 
     private Claims getPayload(final String token) {
         try {
-            return Jwts.parser().verifyWith(secretKey)
-                    .sig().add(Jwts.SIG.HS512)
-                    .and()
-                    .build()
-                    .parseSignedClaims(token).getPayload();
+            return getJwtParser().parseSignedClaims(token).getPayload();
         } catch (IllegalArgumentException e) {
             throw new CommonApplicationException(MessageCode.EXCEPTION_AUTHENTICATION_INVALID_TOKEN);
         }
+    }
+
+    private JwtParser getJwtParser() {
+        return Jwts.parser().verifyWith(secretKey)
+                .sig().add(Jwts.SIG.HS512)
+                .and()
+                .build();
     }
 
     private static String getAccessTokenKey(final String username) {
         return ACCESS_TOKEN_KEY_PREFIX + username;
     }
 
-    private static String getRefreshTokenKeyPrefix(final String username) {
+    private static String getRefreshTokenKey(final String username) {
         return REFRESH_TOKEN_KEY_PREFIX + username;
     }
 }

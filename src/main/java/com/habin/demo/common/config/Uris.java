@@ -7,6 +7,7 @@ public class Uris {
     public static final String REGISTER = API_V1_ROOT + "/register";
     public static final String LOGIN = API_V1_ROOT + "/login";
     public static final String LOGOUT = API_V1_ROOT + "/logout";
+    public static final String REFRESH = API_V1_ROOT + "/refresh";
 
     public static final String REST_NAME_ID = "/{id}";
     public static final String REST_NAME_UUID = "/{uuid}";
@@ -28,6 +29,7 @@ public class Uris {
     public static final String[] PERMIT_ALL_URIS = {
             REGISTER,
             LOGIN,
+            REFRESH,
             SWAGGER_UI,
             SWAGGER_INDEX_HTML,
             SWAGGER_INDEX_CSS,

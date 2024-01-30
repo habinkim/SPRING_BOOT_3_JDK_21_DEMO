@@ -1,20 +1,14 @@
 package com.habin.demo.common.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.rng.UniformRandomProvider;
 import org.apache.commons.rng.simple.RandomSource;
-import org.mapstruct.ap.shaded.freemarker.template.utility.NumberUtil;
-import org.springframework.stereotype.Component;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @UtilityClass
 public class StringUtil {
@@ -78,6 +72,10 @@ public class StringUtil {
 
     public boolean hasText(String text) {
         return org.springframework.util.StringUtils.hasText(text);
+    }
+
+    public String removeBearerPrefix(String accessTokenFromRequest) {
+        return Pattern.matches("^Bearer .*", accessTokenFromRequest) ? accessTokenFromRequest.substring(7) : null;
     }
 
 }

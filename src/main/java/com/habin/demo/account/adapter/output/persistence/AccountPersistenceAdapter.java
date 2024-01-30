@@ -64,7 +64,7 @@ public class AccountPersistenceAdapter implements
     }
 
     @Override
-    @Transactional(propagation = Propagation.MANDATORY)
+    @Transactional
     public AccountInfo saveAccount(SaveAccount saveAccount) {
         AccountJpaEntity saved = accountRepository.save(accountMapper.fromSaveAccountValue(saveAccount));
         return accountMapper.accountInfo(saved);

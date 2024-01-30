@@ -26,4 +26,11 @@ public class AccountCommands {
 
     }
 
+    public record Refresh(
+            @NotBlank
+            String refreshToken
+    ) {
+
+    }
+
 }
