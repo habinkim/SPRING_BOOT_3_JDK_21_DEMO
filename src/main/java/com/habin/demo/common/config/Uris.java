@@ -11,7 +11,8 @@ public class Uris {
     public static final String LOGIN = API_V1_ROOT + "/login";
 
     public static final String[] PERMIT_ALL_URIS = {
-        REGISTER
+        REGISTER,
+        LOGIN
     };
 
     public static final String[] ADMIN_URIS = {

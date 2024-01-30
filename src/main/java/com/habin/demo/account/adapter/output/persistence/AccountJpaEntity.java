@@ -9,9 +9,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,7 +37,7 @@ public class AccountJpaEntity extends BaseEntity implements UserDetails {
     private String uuid;
 
     @Size(max = 255)
-    @Column(name = "username")
+    @Column(name = "username", nullable = false)
     private String username;
 
     @Size(max = 255)
@@ -54,6 +56,14 @@ public class AccountJpaEntity extends BaseEntity implements UserDetails {
     @Convert(converter = RoleConverter.class)
     @Column(name = "roles", nullable = false)
     private List<Role> roles;
+
+    @Column(name = "last_login_at")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastLoginAt;
+
+    @Column(name = "last_logout_at")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastLogoutAt;
 
     @Builder.Default
     @Column(name = "is_account_non_expired")

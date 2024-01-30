@@ -1,6 +1,5 @@
 package com.habin.demo.account.adapter.output.persistence.jwt;
 
-import com.habin.demo.account.application.port.output.jwt.LoadUsernamePort;
 import com.habin.demo.account.application.port.output.jwt.*;
 import com.habin.demo.account.domain.behavior.SaveJwtToken;
 import com.habin.demo.common.exception.CommonApplicationException;
@@ -17,7 +16,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import javax.crypto.SecretKey;
-
 import java.util.Date;
 import java.util.UUID;
 
@@ -32,7 +30,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @RequiredArgsConstructor
 public class JwtTokenPersistenceAdapter implements
         LoadUsernamePort, ValidateJwtTokenPort,
-        LoadAccessTokenPort, LoadRefreshTokenPort,
         CreateAccessTokenPort, CreateRefreshTokenPort,
         CheckAccessTokenExpirePort, CheckRefreshTokenExpirePort,
         UpdateAccessTokenExpirePort, UpdateRefreshTokenExpirePort,
@@ -107,19 +104,6 @@ public class JwtTokenPersistenceAdapter implements
         return tokenValue;
     }
 
-    private String buildJwts(SaveJwtToken saveJwtToken, Date now, Date expireDate) {
-        return Jwts.builder()
-                .claim("role", saveJwtToken.authorities())
-                .claim("tokenType", "Bearer")
-                .id(UUID.randomUUID().toString())
-                .subject(saveJwtToken.username())
-                .issuedAt(now)
-                .notBefore(now)
-                .expiration(expireDate)
-                .signWith(secretKey, Jwts.SIG.HS512)
-                .compact();
-    }
-
 
     @Override // CheckAccessTokenExpirePort
     public Boolean isAccessTokenExpired(final String accessToken) {
@@ -139,6 +123,49 @@ public class JwtTokenPersistenceAdapter implements
     @Override // UpdateRefreshTokenExpirePort
     public void updateRefreshTokenExpire(final String username, final Date expireDate) {
         redisTemplateRefresh.expireAt(getRefreshTokenKeyPrefix(username), expireDate);
+    }
+
+    @Override // DeleteAccessTokenPort
+    public void deleteAccessToken(final String accessToken) {
+        String username = loadUsernameByTokenSkipException(accessToken);
+
+        redisTemplateAccess.delete(ACCESS_TOKEN_KEY_PREFIX + username);
+
+        ValueOperations<String, Object> vopObject = redisTemplateObject.opsForValue();
+        vopObject.set(accessToken, true);
+        redisTemplateObject.expire(accessToken, jwtProperty.getAccessTokenValidityDuration());
+    }
+
+    @Override // DeleteRefreshTokenPort
+    public void deleteRefreshToken(String accessToken) {
+        redisTemplateRefresh.delete(REFRESH_TOKEN_KEY_PREFIX + loadUsernameByTokenSkipException(accessToken));
+    }
+
+    private String buildJwts(SaveJwtToken saveJwtToken, Date now, Date expireDate) {
+        return Jwts.builder()
+                .claim("role", saveJwtToken.authorities())
+                .claim("tokenType", "Bearer")
+                .id(UUID.randomUUID().toString())
+                .subject(saveJwtToken.username())
+                .issuedAt(now)
+                .notBefore(now)
+                .expiration(expireDate)
+                .signWith(secretKey, Jwts.SIG.HS512)
+                .compact();
+    }
+
+    private String loadUsernameByTokenSkipException(String token) {
+        String username = null;
+
+        try {
+            username = loadUsernameByToken(token);
+        } catch (IllegalArgumentException ignored) {
+        } catch (ExpiredJwtException e) {
+            username = e.getClaims().getSubject(); // 만료된 access token으로부터 username를 가져옴
+            log.info("username from expired access token : " + username);
+        }
+
+        return username;
     }
 
     private Boolean validateJwtExpiration(final String token, final RedisTemplate<String, ?> redisTemplate) {
