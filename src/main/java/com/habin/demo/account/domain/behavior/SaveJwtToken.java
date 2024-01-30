@@ -1,4 +1,4 @@
-package com.habin.demo.account.domain.value;
+package com.habin.demo.account.domain.behavior;
 
 public record SaveJwtToken(
         String username,

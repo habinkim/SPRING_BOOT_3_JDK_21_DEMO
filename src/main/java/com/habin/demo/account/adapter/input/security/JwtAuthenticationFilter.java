@@ -1,12 +1,12 @@
 package com.habin.demo.account.adapter.input.security;
 
-import com.habin.demo.account.application.port.input.usecase.jwt.ValidateAccessTokenUseCase;
+import com.habin.demo.account.application.port.input.usecase.jwt.LoadUsernameFromTokenUseCase;
+import com.habin.demo.account.application.port.input.usecase.jwt.usecase.jwt.ValidateAccessTokenUseCase;
 import com.habin.demo.common.config.Uris;
 import com.habin.demo.common.exception.CommonApplicationException;
 import com.habin.demo.common.response.ExceptionResponse;
 import com.habin.demo.common.response.MessageCode;
-import com.habin.demo.common.util.JwtUtil;
-import com.habin.demo.common.util.MessageSourceUtil;
+import com.habin.demo.common.util.i18n.MessageSourceUtil;
 import com.habin.demo.common.util.ObjectUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -39,6 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
     private final ValidateAccessTokenUseCase validateAccessTokenUseCase;
+    private final LoadUsernameFromTokenUseCase loadUsernameFromTokenUseCase;
 
     private final ObjectUtil objectUtil;
     private final MessageSourceUtil messageSourceUtil;
@@ -97,12 +98,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return Pattern.matches("^Bearer .*", accessTokenFromRequest) ? accessTokenFromRequest.substring(7) : null;
     }
 
-    private UserDetails getUserDetails(String token) {
-        return userDetailsService.loadUserByUsername(getUsernameFromToken(token));
-    }
-
     private PreAuthenticatedAuthenticationToken getAuthentication(final String token) {
         UserDetails userDetails = getUserDetails(token);
         return new PreAuthenticatedAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
+    private UserDetails getUserDetails(String token) {
+        String username = loadUsernameFromTokenUseCase.loadUsernameFromToken(token);
+        return userDetailsService.loadUserByUsername(username);
     }
 }

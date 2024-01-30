@@ -1,4 +1,4 @@
-package com.habin.demo.account.domain;
+package com.habin.demo.account.domain.state;
 
 import com.habin.demo.account.adapter.output.persistence.AccountJpaEntity;
 import lombok.Getter;

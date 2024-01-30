@@ -1,7 +1,7 @@
 package com.habin.demo.account.application.port.output;
 
-import com.habin.demo.account.domain.value.AccountInfo;
-import com.habin.demo.account.domain.CustomUser;
+import com.habin.demo.account.domain.state.AccountInfo;
+import com.habin.demo.account.domain.state.CustomUser;
 
 import java.util.Optional;
 

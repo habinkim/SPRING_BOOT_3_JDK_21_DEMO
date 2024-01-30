@@ -2,9 +2,9 @@ package com.habin.demo.account.adapter.output.persistence;
 
 import com.habin.demo.account.application.port.output.LoadAccountPort;
 import com.habin.demo.account.application.port.output.SaveAccountPort;
-import com.habin.demo.account.domain.CustomUser;
-import com.habin.demo.account.domain.value.AccountInfo;
-import com.habin.demo.account.domain.value.SaveAccount;
+import com.habin.demo.account.domain.state.CustomUser;
+import com.habin.demo.account.domain.state.AccountInfo;
+import com.habin.demo.account.domain.behavior.SaveAccount;
 import com.habin.demo.common.hexagon.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Propagation;

@@ -1,6 +1,6 @@
 package com.habin.demo.common.response;
 
-import com.habin.demo.common.util.MessageSourceUtil;
+import com.habin.demo.common.util.i18n.MessageSourceUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.habin.demo.account.domain.value;
+package com.habin.demo.account.domain.state;
 
 import com.habin.demo.account.adapter.output.persistence.Role;
 import jakarta.validation.constraints.NotNull;

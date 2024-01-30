@@ -1,7 +1,7 @@
 package com.habin.demo.account.adapter.output.persistence;
 
-import com.habin.demo.account.domain.value.AccountInfo;
-import com.habin.demo.account.domain.value.SaveAccount;
+import com.habin.demo.account.domain.state.AccountInfo;
+import com.habin.demo.account.domain.behavior.SaveAccount;
 import com.habin.demo.common.config.BaseMapperConfig;
 import org.mapstruct.Mapper;
 

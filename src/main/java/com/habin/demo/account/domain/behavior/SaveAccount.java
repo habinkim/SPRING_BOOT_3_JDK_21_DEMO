@@ -1,6 +1,6 @@
-package com.habin.demo.account.domain.value;
+package com.habin.demo.account.domain.behavior;
 
-import com.habin.demo.account.application.port.input.command.AccountCommands;
+import com.habin.demo.account.application.port.input.usecase.jwt.command.AccountCommands;
 
 /**
  * @see com.habin.demo.account.application.service.RegisterService#register(AccountCommands.Register)

@@ -1,4 +1,4 @@
-package com.habin.demo.account.application.port.input.command;
+package com.habin.demo.account.application.port.input.usecase.jwt.command;
 
 import jakarta.validation.constraints.NotBlank;
 

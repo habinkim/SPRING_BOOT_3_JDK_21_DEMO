@@ -1,6 +1,6 @@
 package com.habin.demo.account.application.service.jwt;
 
-import com.habin.demo.account.application.port.input.usecase.jwt.ValidateAccessTokenUseCase;
+import com.habin.demo.account.application.port.input.usecase.jwt.usecase.jwt.ValidateAccessTokenUseCase;
 import com.habin.demo.account.application.port.output.jwt.CheckAccessTokenExpirePort;
 import com.habin.demo.account.application.port.output.jwt.ValidateJwtTokenPort;
 import com.habin.demo.common.hexagon.UseCase;

@@ -1,7 +1,8 @@
-package com.habin.demo.account.adapter.input.web;
+package com.habin.demo.account.adapter.input.rest;
 
-import com.habin.demo.account.application.port.input.command.AccountCommands;
-import com.habin.demo.account.application.port.input.usecase.RegisterUseCase;
+import com.habin.demo.account.application.port.input.usecase.jwt.command.AccountCommands;
+import com.habin.demo.account.application.port.input.usecase.jwt.usecase.RegisterUseCase;
+import com.habin.demo.account.domain.state.RegisterResult;
 import com.habin.demo.common.config.Uris;
 import com.habin.demo.common.hexagon.WebAdapter;
 import com.habin.demo.common.response.Response;
@@ -21,12 +22,12 @@ public class RegisterController {
 
     /**
      * @return
-     * @param<p> {@link com.habin.demo.account.application.port.input.command.AccountCommands.Register} command
+     * @param<p> {@link AccountCommands.Register} command
      */
     @PostMapping(value = Uris.REGISTER)
-    public ResponseEntity<Response<?>> register(@Valid @RequestBody final AccountCommands.Register command) {
-        registerUseCase.register(command);
-        return responseMapper.ok();
+    public ResponseEntity<Response<RegisterResult>> register(@Valid @RequestBody final AccountCommands.Register command) {
+        RegisterResult registerResult = registerUseCase.register(command);
+        return responseMapper.ok(registerResult);
     }
 
 }

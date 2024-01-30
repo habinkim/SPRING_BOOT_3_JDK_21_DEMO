@@ -1,4 +1,4 @@
-package com.habin.demo.common.util;
+package com.habin.demo.common.util.i18n;
 
 import com.habin.demo.common.response.MessageCode;
 import lombok.AllArgsConstructor;

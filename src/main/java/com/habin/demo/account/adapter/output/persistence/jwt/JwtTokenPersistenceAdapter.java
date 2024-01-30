@@ -2,7 +2,7 @@ package com.habin.demo.account.adapter.output.persistence.jwt;
 
 import com.habin.demo.account.application.port.output.jwt.LoadUsernamePort;
 import com.habin.demo.account.application.port.output.jwt.*;
-import com.habin.demo.account.domain.value.SaveJwtToken;
+import com.habin.demo.account.domain.behavior.SaveJwtToken;
 import com.habin.demo.common.exception.CommonApplicationException;
 import com.habin.demo.common.hexagon.PersistenceAdapter;
 import com.habin.demo.common.property.JwtProperty;
@@ -15,14 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
 
 import java.util.Date;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -82,16 +79,7 @@ public class JwtTokenPersistenceAdapter implements
     public String createAccessToken(final SaveJwtToken saveJwtToken) {
         Date now = new Date();
         Date expireDate = new Date(now.getTime() + jwtProperty.getAccessTokenValidity());
-        String tokenValue = Jwts.builder()
-                .claim("role", saveJwtToken.authorities())
-                .claim("tokenType", "Bearer")
-                .id(UUID.randomUUID().toString())
-                .subject(saveJwtToken.username())
-                .issuedAt(now)
-                .notBefore(now)
-                .expiration(expireDate)
-                .signWith(secretKey, Jwts.SIG.HS512)
-                .compact();
+        String tokenValue = buildJwts(saveJwtToken, now, expireDate);
 
         ValueOperations<String, AccessToken> operations = redisTemplateAccess.opsForValue();
         AccessToken buildAccessToken = new AccessToken(saveJwtToken.username(), tokenValue);
@@ -107,16 +95,7 @@ public class JwtTokenPersistenceAdapter implements
     public String createRefreshToken(final SaveJwtToken saveJwtToken) {
         Date now = new Date();
         Date expireDate = new Date(now.getTime() + jwtProperty.getRefreshTokenValidity());
-        String tokenValue = Jwts.builder()
-                .claim("role", saveJwtToken.authorities())
-                .claim("tokenType", "Bearer")
-                .id(UUID.randomUUID().toString())
-                .subject(saveJwtToken.username())
-                .issuedAt(now)
-                .notBefore(now)
-                .expiration(expireDate)
-                .signWith(secretKey, Jwts.SIG.HS512)
-                .compact();
+        String tokenValue = buildJwts(saveJwtToken, now, expireDate);
 
         ValueOperations<String, RefreshToken> operations = redisTemplateRefresh.opsForValue();
         RefreshToken buildRefreshToken = new RefreshToken(saveJwtToken.username(), tokenValue);
@@ -126,6 +105,19 @@ public class JwtTokenPersistenceAdapter implements
         redisTemplateRefresh.expireAt(refreshTokenKey, expireDate);
 
         return tokenValue;
+    }
+
+    private String buildJwts(SaveJwtToken saveJwtToken, Date now, Date expireDate) {
+        return Jwts.builder()
+                .claim("role", saveJwtToken.authorities())
+                .claim("tokenType", "Bearer")
+                .id(UUID.randomUUID().toString())
+                .subject(saveJwtToken.username())
+                .issuedAt(now)
+                .notBefore(now)
+                .expiration(expireDate)
+                .signWith(secretKey, Jwts.SIG.HS512)
+                .compact();
     }
 
 
