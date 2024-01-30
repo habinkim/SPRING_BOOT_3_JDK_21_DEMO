@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -12,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
 
 @SuperBuilder(toBuilder = true)
@@ -24,7 +26,7 @@ public class AccountJpaEntity extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
     @Size(max = 255)
@@ -41,21 +43,37 @@ public class AccountJpaEntity extends BaseEntity implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @NotNull
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @NotNull
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
+
+    @Convert(converter = RoleConverter.class)
+    @Column(name = "roles", nullable = false)
+    private List<Role> roles;
+
+    @Builder.Default
     @Column(name = "is_account_non_expired")
-    private Boolean isAccountNonExpired;
+    private Boolean isAccountNonExpired = true;
 
+    @Builder.Default
     @Column(name = "is_account_non_locked")
-    private Boolean isAccountNonLocked;
+    private Boolean isAccountNonLocked = true;
 
+    @Builder.Default
     @Column(name = "is_credentials_non_expired")
-    private Boolean isCredentialsNonExpired;
+    private Boolean isCredentialsNonExpired = true;
 
+    @Builder.Default
     @Column(name = "is_enabled")
-    private Boolean isEnabled;
+    private Boolean isEnabled = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return roles;
     }
 
     @Override

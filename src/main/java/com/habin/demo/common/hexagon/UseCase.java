@@ -2,13 +2,14 @@ package com.habin.demo.common.hexagon;
 
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.lang.annotation.*;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
+@Service
 public @interface UseCase {
 
   /**
@@ -16,7 +17,7 @@ public @interface UseCase {
    * to be turned into a Spring bean in case of an autodetected component.
    * @return the suggested component name, if any (or empty String otherwise)
    */
-  @AliasFor(annotation = Component.class)
+  @AliasFor(annotation = Service.class)
   String value() default "";
 
 }

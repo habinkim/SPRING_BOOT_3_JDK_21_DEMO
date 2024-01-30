@@ -1,4 +1,4 @@
-package com.habin.demo.account.adapter.output.security.service;
+package com.habin.demo.account.application.service;
 
 import com.habin.demo.common.util.JwtUtil;
 import lombok.RequiredArgsConstructor;

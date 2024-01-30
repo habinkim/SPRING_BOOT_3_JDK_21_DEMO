@@ -1,11 +1,13 @@
-package com.habin.demo.common.filter;
+package com.habin.demo.account.adapter.input.security;
 
+import com.habin.demo.account.application.port.input.usecase.jwt.ValidateAccessTokenUseCase;
 import com.habin.demo.common.config.Uris;
-import com.habin.demo.common.util.JwtUtil;
+import com.habin.demo.common.exception.CommonApplicationException;
 import com.habin.demo.common.response.ExceptionResponse;
 import com.habin.demo.common.response.MessageCode;
+import com.habin.demo.common.util.JwtUtil;
 import com.habin.demo.common.util.MessageSourceUtil;
-import com.habin.demo.common.util.StringUtil;
+import com.habin.demo.common.util.ObjectUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,11 +15,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
@@ -26,37 +28,32 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.regex.Pattern;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
-    private final StringUtil stringUtil;
+    private final UserDetailsService userDetailsService;
+    private final ValidateAccessTokenUseCase validateAccessTokenUseCase;
+
+    private final ObjectUtil objectUtil;
     private final MessageSourceUtil messageSourceUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String accessToken = jwtUtil.getAccessTokenFromRequest(request);
+            String accessToken = getAccessTokenFromRequest(request);
 
-            if (accessToken != null && jwtUtil.validate(accessToken) && !jwtUtil.isAccessTokenExpired(accessToken)) {
-                PreAuthenticatedAuthenticationToken authentication = jwtUtil.getAuthentication(accessToken);
+            if (validateAccessTokenUseCase.validateAccessToken(accessToken)) {
+                PreAuthenticatedAuthenticationToken authentication = getAuthentication(accessToken);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                if (!HttpMethod.OPTIONS.name().equals(request.getMethod())) {
-                    log.info("===================================================");
-                    log.info("AuthenticationJwtFilter.doFilterInternal >> ");
-                    log.info("authentication, is login = {}", authentication.isAuthenticated());
-                    log.info("authentication, name ={}", authentication.getName());
-                    log.info("authentication, principal ={}", authentication.getPrincipal());
-                    log.info("authentication, credentials ={}", authentication.getCredentials());
-                    log.info("authentication, details ={}", authentication.getDetails());
-                    log.info("===================================================");
-                }
             }
+
         } catch (ExpiredJwtException e) {
             log.error("ExpiredJwtException: {}", e.getMessage());
             response.setStatus(401);
@@ -67,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setHeader("Access-Control-Allow-Credentials", "true");
             response.setHeader("Access-Control-Max-Age", "180");
 
-            String message = stringUtil.objectToJson(
+            String message = objectUtil.objectToJson(
                     new ExceptionResponse(messageSourceUtil.getMessage(MessageCode.EXCEPTION_EXPIRED_TOKEN.getCode()),
                             MessageCode.EXCEPTION_EXPIRED_TOKEN.getCode()));
             response.getWriter().write(message);
@@ -87,5 +84,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .findFirst();
 
         return matchedUri.isPresent();
+    }
+
+    private String getAccessTokenFromRequest(final HttpServletRequest request) {
+        String accessToken = Optional.ofNullable(request.getHeader(AUTHORIZATION))
+                .orElseThrow(() -> new CommonApplicationException(MessageCode.EXCEPTION_AUTHENTICATION_TOKEN_NOT_FOUND));
+
+        return removeBearerPrefix(accessToken);
+    }
+
+    private String removeBearerPrefix(String accessTokenFromRequest) {
+        return Pattern.matches("^Bearer .*", accessTokenFromRequest) ? accessTokenFromRequest.substring(7) : null;
+    }
+
+    private UserDetails getUserDetails(String token) {
+        return userDetailsService.loadUserByUsername(getUsernameFromToken(token));
+    }
+
+    private PreAuthenticatedAuthenticationToken getAuthentication(final String token) {
+        UserDetails userDetails = getUserDetails(token);
+        return new PreAuthenticatedAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }

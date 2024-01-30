@@ -1,6 +1,6 @@
 package com.habin.demo.common.config;
 
-import com.habin.demo.common.filter.JwtAuthenticationFilter;
+import com.habin.demo.account.adapter.input.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

@@ -8,9 +8,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 
-@Builder(toBuilder = true)
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 @RedisHash("RefreshToken")
 public final class RefreshToken implements Serializable, JwtToken {

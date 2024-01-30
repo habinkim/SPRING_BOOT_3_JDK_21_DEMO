@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * @see com.habin.demo.common.response.ResponseMapper#error(MessageCode)
+ */
 @Getter
 @AllArgsConstructor
 public enum MessageCode {
@@ -21,7 +24,7 @@ public enum MessageCode {
 
 
     // 사용자 관련
-    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "2000"),
+    ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "2000"),
     USER_POLICY_ACCOUNT_REGISTERED(HttpStatus.BAD_REQUEST, "2001"),
     USER_POLICY_NICKNAME_REGISTERED(HttpStatus.BAD_REQUEST, "2002"),
     USER_UNREGISTERED(HttpStatus.UNAUTHORIZED, "2003"),

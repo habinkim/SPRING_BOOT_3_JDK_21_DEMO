@@ -2,6 +2,7 @@ package com.habin.demo.account.adapter.output.persistence.jwt;
 
 import com.habin.demo.account.application.port.output.jwt.LoadUsernamePort;
 import com.habin.demo.account.application.port.output.jwt.*;
+import com.habin.demo.account.domain.value.SaveJwtToken;
 import com.habin.demo.common.exception.CommonApplicationException;
 import com.habin.demo.common.hexagon.PersistenceAdapter;
 import com.habin.demo.common.property.JwtProperty;
@@ -10,13 +11,18 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
 
 import java.util.Date;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -24,12 +30,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 /**
  * Account - Output Adapter - Persistence - JwtToken
  */
+@Slf4j
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class JwtTokenPersistenceAdapter implements
-        LoadUsernamePort,
+        LoadUsernamePort, ValidateJwtTokenPort,
         LoadAccessTokenPort, LoadRefreshTokenPort,
-        SaveAccessTokenPort, SaveRefreshTokenPort,
+        CreateAccessTokenPort, CreateRefreshTokenPort,
         CheckAccessTokenExpirePort, CheckRefreshTokenExpirePort,
         UpdateAccessTokenExpirePort, UpdateRefreshTokenExpirePort,
         DeleteAccessTokenPort, DeleteRefreshTokenPort,
@@ -40,7 +47,6 @@ public class JwtTokenPersistenceAdapter implements
 
     private SecretKey secretKey;
     private final JwtProperty jwtProperty;
-    private final UserDetailsService userDetailsService;
 
     private final RedisTemplate<String, AccessToken> redisTemplateAccess;
     private final RedisTemplate<String, RefreshToken> redisTemplateRefresh;
@@ -56,6 +62,72 @@ public class JwtTokenPersistenceAdapter implements
         Claims body = getPayload(token);
         return body.getSubject();
     }
+
+    @Override // ValidateJwtTokenPort
+    public Boolean validate(String token) {
+        try {
+            Jwts.parser().verifyWith(secretKey)
+                    .sig().add(Jwts.SIG.HS512)
+                    .and()
+                    .build()
+                    .parseSignedClaims(token);
+            return true;
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty: {}", e.getMessage());
+            throw new CommonApplicationException(MessageCode.EXCEPTION_AUTHENTICATION_INVALID_TOKEN);
+        }
+    }
+
+    @Override // CreateAccessTokenPort
+    public String createAccessToken(final SaveJwtToken saveJwtToken) {
+        Date now = new Date();
+        Date expireDate = new Date(now.getTime() + jwtProperty.getAccessTokenValidity());
+        String tokenValue = Jwts.builder()
+                .claim("role", saveJwtToken.authorities())
+                .claim("tokenType", "Bearer")
+                .id(UUID.randomUUID().toString())
+                .subject(saveJwtToken.username())
+                .issuedAt(now)
+                .notBefore(now)
+                .expiration(expireDate)
+                .signWith(secretKey, Jwts.SIG.HS512)
+                .compact();
+
+        ValueOperations<String, AccessToken> operations = redisTemplateAccess.opsForValue();
+        AccessToken buildAccessToken = new AccessToken(saveJwtToken.username(), tokenValue);
+
+        String accessTokenKey = ACCESS_TOKEN_KEY_PREFIX + saveJwtToken.username();
+        operations.set(accessTokenKey, buildAccessToken);
+        redisTemplateAccess.expireAt(accessTokenKey, expireDate);
+
+        return tokenValue;
+    }
+
+    @Override // CreateRefreshTokenPort
+    public String createRefreshToken(final SaveJwtToken saveJwtToken) {
+        Date now = new Date();
+        Date expireDate = new Date(now.getTime() + jwtProperty.getRefreshTokenValidity());
+        String tokenValue = Jwts.builder()
+                .claim("role", saveJwtToken.authorities())
+                .claim("tokenType", "Bearer")
+                .id(UUID.randomUUID().toString())
+                .subject(saveJwtToken.username())
+                .issuedAt(now)
+                .notBefore(now)
+                .expiration(expireDate)
+                .signWith(secretKey, Jwts.SIG.HS512)
+                .compact();
+
+        ValueOperations<String, RefreshToken> operations = redisTemplateRefresh.opsForValue();
+        RefreshToken buildRefreshToken = new RefreshToken(saveJwtToken.username(), tokenValue);
+
+        String refreshTokenKey = REFRESH_TOKEN_KEY_PREFIX + saveJwtToken.username();
+        operations.set(refreshTokenKey, buildRefreshToken);
+        redisTemplateRefresh.expireAt(refreshTokenKey, expireDate);
+
+        return tokenValue;
+    }
+
 
     @Override // CheckAccessTokenExpirePort
     public Boolean isAccessTokenExpired(final String accessToken) {

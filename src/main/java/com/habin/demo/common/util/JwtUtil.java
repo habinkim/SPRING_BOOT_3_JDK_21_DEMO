@@ -44,7 +44,6 @@ public class JwtUtil implements InitializingBean {
     private final JwtProperty jwtProperty;
     private final UserDetailsService userDetailsService;
 
-    private final RedisTemplate<String, JwtToken> redisTemplateJwt;
     private final RedisTemplate<String, AccessToken> redisTemplateAccess;
     private final RedisTemplate<String, RefreshToken> redisTemplateRefresh;
     private final RedisTemplate<String, Object> redisTemplateObject;
@@ -126,7 +125,7 @@ public class JwtUtil implements InitializingBean {
                 .compact();
 
         ValueOperations<String, AccessToken> operations = redisTemplateAccess.opsForValue();
-        AccessToken buildAccessToken = AccessToken.builder().username(userDetails.getUsername()).token(tokenValue).build();
+        AccessToken buildAccessToken = new AccessToken(userDetails.getUsername(), tokenValue);
 
         String accessTokenKey = ACCESS_TOKEN_KEY_PREFIX + userDetails.getUsername();
         operations.set(accessTokenKey, buildAccessToken);
@@ -154,7 +153,7 @@ public class JwtUtil implements InitializingBean {
                 .compact();
 
         ValueOperations<String, RefreshToken> operations = redisTemplateRefresh.opsForValue();
-        RefreshToken buildRefreshToken = RefreshToken.builder().username(userDetails.getUsername()).token(tokenValue).build();
+        RefreshToken buildRefreshToken = new RefreshToken(userDetails.getUsername(), tokenValue);
 
         String refreshTokenKey = REFRESH_TOKEN_KEY_PREFIX + userDetails.getUsername();
         operations.set(refreshTokenKey, buildRefreshToken);
@@ -214,7 +213,6 @@ public class JwtUtil implements InitializingBean {
         String accessToken = getAccessTokenFromRequest(request);
         vopObject.set(accessToken, true);
         redisTemplateObject.expire(accessToken, jwtProperty.getAccessTokenValidityDuration());
-
     }
 
     public void destroyRefreshToken(HttpServletRequest request) {

@@ -3,26 +3,77 @@ package com.habin.demo.common.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.rng.UniformRandomProvider;
+import org.apache.commons.rng.simple.RandomSource;
+import org.mapstruct.ap.shaded.freemarker.template.utility.NumberUtil;
 import org.springframework.stereotype.Component;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.UUID;
 
-@Component
+@UtilityClass
 public class StringUtil {
-    public String uuidGenerator() {
+
+    private static SecureRandom secureRandom() throws NoSuchAlgorithmException {
+        return SecureRandom.getInstanceStrong();
+    }
+
+    private static UniformRandomProvider randomProvider() {
+        return RandomSource.SFC_64.create();
+    }
+
+    public String randomNumeric(final int count) throws NoSuchAlgorithmException {
+        return generateRandomString(count, false, true);
+    }
+
+    public String randomNumeric(final int minLength, final int maxLength) throws NoSuchAlgorithmException {
+        return randomNumeric(rangedRandom(minLength, maxLength));
+    }
+
+    public String randomAlphabetic(final int count) throws NoSuchAlgorithmException {
+        return generateRandomString(count, true, false);
+    }
+
+    public String randomAlphabetic(final int minLength, final int maxLength) throws NoSuchAlgorithmException {
+        return randomAlphabetic(rangedRandom(minLength, maxLength));
+    }
+
+    public String randomAlphanumeric(final int count) throws NoSuchAlgorithmException {
+        return generateRandomString(count, true, true);
+    }
+
+    public String randomAlphanumeric(final int minLength, final int maxLength) throws NoSuchAlgorithmException {
+        return randomAlphanumeric(rangedRandom(minLength, maxLength));
+    }
+
+    public String randomAlphaNumericSymbol(final int count) throws NoSuchAlgorithmException {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@$%^&*";
+        return generateRandomString(count, characters.toCharArray());
+    }
+
+    public String randomAlphaNumericSymbol(final int minLength, final int maxLength) throws NoSuchAlgorithmException {
+        return randomAlphaNumericSymbol(rangedRandom(minLength, maxLength));
+    }
+
+    private static int rangedRandom(final int minLengthInclusive, final int maxLengthExclusive) {
+        return randomProvider().nextInt(minLengthInclusive, maxLengthExclusive);
+    }
+
+    private String generateRandomString(final int count, final boolean letters, final boolean numbers) throws NoSuchAlgorithmException {
+        return RandomStringUtils.random(count, 0, 0, letters, numbers, null, secureRandom());
+    }
+
+    private String generateRandomString(final int count, char... chars) throws NoSuchAlgorithmException {
+        return RandomStringUtils.random(count, 0, 0, true, true, chars, secureRandom());
+    }
+
+    public String uuid() {
         return UUID.randomUUID().toString();
-    }
-
-    public String objectToJson(Object object) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        return mapper.writeValueAsString(object);
-    }
-
-    public String objectToPrettyJson(Object object) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
     }
 
     public boolean hasText(String text) {
