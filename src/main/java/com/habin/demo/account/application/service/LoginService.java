@@ -15,12 +15,14 @@ import com.habin.demo.common.hexagon.UseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Collectors;
 
 import static com.habin.demo.common.response.MessageCode.ACCOUNT_NOT_FOUND;
 
+@Service
 @UseCase
 @RequiredArgsConstructor
 public class LoginService implements LoginUseCase {

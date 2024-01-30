@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Service
+@Component
 public @interface UseCase {
 
   /**
@@ -17,7 +17,7 @@ public @interface UseCase {
    * to be turned into a Spring bean in case of an autodetected component.
    * @return the suggested component name, if any (or empty String otherwise)
    */
-  @AliasFor(annotation = Service.class)
+  @AliasFor(annotation = Component.class)
   String value() default "";
 
 }

@@ -7,15 +7,17 @@ import com.habin.demo.common.hexagon.UseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 
+@Service
 @UseCase
 @RequiredArgsConstructor
 public class GenerateRefreshTokenService implements GenerateRefreshTokenUseCase {
 
     private final CreateRefreshTokenPort createRefreshTokenPort;
-    
+
     @Override
     public String generateRefreshToken(final UserDetails userDetails) {
         String authorities = userDetails.getAuthorities().stream()

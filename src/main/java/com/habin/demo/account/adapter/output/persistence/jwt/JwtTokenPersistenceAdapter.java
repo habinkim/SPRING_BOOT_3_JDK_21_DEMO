@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -26,6 +27,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * Account - Output Adapter - Persistence - JwtToken
  */
 @Slf4j
+@Component
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class JwtTokenPersistenceAdapter implements

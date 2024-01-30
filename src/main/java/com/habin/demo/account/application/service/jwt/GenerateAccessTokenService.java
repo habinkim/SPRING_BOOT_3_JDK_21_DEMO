@@ -7,9 +7,11 @@ import com.habin.demo.common.hexagon.UseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 
+@Service
 @UseCase
 @RequiredArgsConstructor
 public class GenerateAccessTokenService implements GenerateAccessTokenUseCase {

@@ -9,7 +9,9 @@ import com.habin.demo.common.response.ResponseMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 @WebAdapter
 @RequiredArgsConstructor
 public class LogoutController {

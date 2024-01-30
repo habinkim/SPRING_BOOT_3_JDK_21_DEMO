@@ -16,12 +16,14 @@ import com.habin.demo.common.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Collectors;
 
 import static com.habin.demo.common.response.MessageCode.USER_POLICY_ACCOUNT_REGISTERED;
 
+@Service
 @UseCase
 @RequiredArgsConstructor
 public class RegisterService implements RegisterUseCase {

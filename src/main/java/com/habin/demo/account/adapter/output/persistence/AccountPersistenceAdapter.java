@@ -9,12 +9,14 @@ import com.habin.demo.account.domain.behavior.SaveAccount;
 import com.habin.demo.account.domain.state.RegisteredAccountInfo;
 import com.habin.demo.common.hexagon.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Component
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class AccountPersistenceAdapter implements

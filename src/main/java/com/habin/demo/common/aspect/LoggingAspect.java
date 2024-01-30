@@ -1,6 +1,5 @@
 package com.habin.demo.common.aspect;
 
-import com.surgepay.api.v3.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -21,13 +20,18 @@ public class LoggingAspect {
     @Pointcut(
             "within(@org.springframework.stereotype.Repository *)" +
                     " || within(@org.springframework.stereotype.Service *)" +
+                    " || within(@org.springframework.stereotype.Component *)" +
                     " || within(@org.springframework.web.bind.annotation.RestController *)"
     )
     public void springBeanPointcut() {
     }
 
-    @Pointcut("within(com.habin.demo.*.repository..*)" + " || within(com.surgepay.api.v3.*.service..*)" + " || within(com.surgepay.api.v3.*.controller..*)")
-    public void applicationPackagePointcut() {
+    @Pointcut(
+            "within(@com.habin.demo.common.hexagon.PersistenceAdapter *)" +
+                    " || within(@com.habin.demo.common.hexagon.UseCase *)" +
+                    " || within(@com.habin.demo.common.hexagon.WebAdapter *)"
+    )
+    public void hexagon() {
     }
 
     @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)")
@@ -54,8 +58,12 @@ public class LoggingAspect {
     public void restApi() {
     }
 
-    @Pointcut("execution(* com.surgepay.api.v3.*.repository.*.*(..))")
-    public void jpaQuery() {
+    @Pointcut("execution(* com.habin.demo.*.adapter.output.persistence.*.*(..))")
+    public void persistence() {
+    }
+
+    @Pointcut("execution(* com.habin.demo.*.application.port.input.usecase.*.*(..))")
+    public void useCase() {
     }
 
     /**
@@ -68,31 +76,18 @@ public class LoggingAspect {
         return LoggerFactory.getLogger(joinPoint.getSignature().getDeclaringTypeName());
     }
 
-    @AfterThrowing(pointcut = "applicationPackagePointcut() && springBeanPointcut()", throwing = "e")
-    public void logAfterThrowing(JoinPoint joinPoint, ApiException e) {
+    @AfterThrowing(pointcut = "springBeanPointcut()", throwing = "e")
+    public void logAfterThrowing(JoinPoint joinPoint, Exception e) {
         logger(joinPoint)
                 .error(
                         "Exception in {}() with cause = '{}' and exception = '{}'",
                         joinPoint.getSignature().getName(),
                         e.getCause() != null ? e.getCause() : "NULL",
-                        e.getRealMessage(), e
+                        e.getMessage(), e
                 );
     }
 
-    @AfterThrowing(pointcut = "applicationPackagePointcut() && springBeanPointcut()", throwing = "e")
-    public void logAfterThrowing(JoinPoint joinPoint, Exception e) {
-        if (!(e instanceof ApiException)) {
-            logger(joinPoint)
-                    .error(
-                            "Exception in {}() with cause = '{}' and exception = '{}'",
-                            joinPoint.getSignature().getName(),
-                            e.getCause() != null ? e.getCause() : "NULL",
-                            e.getMessage(), e
-                    );
-        }
-    }
-
-    @Around("restApi() || jpaQuery()")
+    @Around("restApi() || persistence() || useCase()")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         StopWatch stopWatch = new StopWatch("LogExecutionTime Aop");
 
