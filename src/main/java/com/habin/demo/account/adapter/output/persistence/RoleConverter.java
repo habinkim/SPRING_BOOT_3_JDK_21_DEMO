@@ -3,6 +3,7 @@ package com.habin.demo.account.adapter.output.persistence;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.habin.demo.common.util.ObjectUtil;
+import com.habin.demo.common.util.StringUtil;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Converter
 @RequiredArgsConstructor
-public class RoleConverter implements AttributeConverter<List<Role>, String>  {
+public class RoleConverter implements AttributeConverter<List<Role>, String> {
 
     private final ObjectUtil objectUtil;
     private final ObjectMapper objectMapper;
@@ -26,6 +27,11 @@ public class RoleConverter implements AttributeConverter<List<Role>, String>  {
     @SneakyThrows
     @Override
     public List<Role> convertToEntityAttribute(String dbData) {
-        return objectMapper.readValue(dbData, new TypeReference<>() {});
+
+        if (StringUtil.hasText(dbData))
+            return objectMapper.readValue(dbData, new TypeReference<>() {
+            });
+
+        return null;
     }
 }

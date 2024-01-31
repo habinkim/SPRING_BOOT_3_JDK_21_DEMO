@@ -1,7 +1,8 @@
 package com.habin.demo.base;
 
 import com.habin.demo.base.doc.RestDocsConfig;
-import com.habin.demo.base.docker.TestContainersConfig;
+import com.habin.demo.common.response.MessageCode;
+import com.habin.demo.common.util.i18n.MessageSourceUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +15,25 @@ import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @AutoConfigureMockMvc
-@Import({RestDocsConfig.class, TestContainersConfig.class})
+@Import(RestDocsConfig.class)
 @ExtendWith(RestDocumentationExtension.class)
 public abstract class ControllerBaseTest extends AbstractIntegrationTest {
 
@@ -36,6 +42,9 @@ public abstract class ControllerBaseTest extends AbstractIntegrationTest {
 
     @Autowired
     protected MockMvc mockMvc;
+
+    @Autowired
+    protected MessageSourceUtil messageSourceUtil;
 
     @BeforeEach
     void setUp(final WebApplicationContext context, final RestDocumentationContextProvider provider) {
@@ -80,6 +89,22 @@ public abstract class ControllerBaseTest extends AbstractIntegrationTest {
             fieldWithPath("result.numberOfElements").description("현재 페이지 요소 갯수"),
             fieldWithPath("result.empty").description("현재 페이지 요소 미존재 여부")
     };
+
+    protected ResultMatcher[] baseAssertion(MessageCode messageCode) {
+        return new ResultMatcher[]{
+                status().is(messageCode.getHttpStatus().value()),
+                jsonPath("$.message", notNullValue()),
+                jsonPath("$.code", notNullValue()),
+                jsonPath("$.message", is(messageSourceUtil.getMessage(messageCode.getCode()))),
+                jsonPath("$.code", is(messageCode.getCode()))
+        };
+    }
+
+    protected static final FieldDescriptor[] baseResponseFields = {
+            fieldWithPath("message").description("시스템 메시지"),
+            fieldWithPath("code").description("상태 코드")
+    };
+
 
     protected static final HeaderDescriptor authorizationHeader = headerWithName(AUTHORIZATION).description("AccessToken \"Bearer \" prefix");
 
