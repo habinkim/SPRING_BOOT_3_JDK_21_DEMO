@@ -46,7 +46,7 @@ class RegisterControllerTest extends ControllerBaseTest {
     @Order(1)
     @DisplayName("회원가입, 성공")
     void registerSuccess() throws Exception {
-        String username = StringUtil.randomAlphaNumericSymbol(10, 15);
+        String username = StringUtil.randomAlphanumeric(10, 15);
         String password = StringUtil.randomAlphaNumericSymbol(15, 20);
         String email = StringUtil.randomAlphabetic(7) + "@" + StringUtil.randomAlphabetic(5) + ".com";
         String nickname = StringUtil.randomAlphabetic(5);
