@@ -107,9 +107,4 @@ class RegisterControllerTest extends ControllerBaseTest {
 
     }
 
-    private String getAccessToken(ResultActions resultActions) throws UnsupportedEncodingException {
-        String contentAsString = resultActions.andReturn().getResponse().getContentAsString();
-        return JsonPath.read(contentAsString, "$.data.access_token");
-    }
-
 }

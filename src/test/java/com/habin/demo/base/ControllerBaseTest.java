@@ -3,6 +3,7 @@ package com.habin.demo.base;
 import com.habin.demo.base.doc.RestDocsConfig;
 import com.habin.demo.common.response.MessageCode;
 import com.habin.demo.common.util.i18n.MessageSourceUtil;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,12 @@ import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+
+import java.io.UnsupportedEncodingException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.is;
@@ -110,6 +114,11 @@ public abstract class ControllerBaseTest extends AbstractIntegrationTest {
 
     protected String bearerToken(String tokenString) {
         return "Bearer " + tokenString;
+    }
+
+    protected String getAccessToken(ResultActions resultActions) throws UnsupportedEncodingException {
+        String contentAsString = resultActions.andReturn().getResponse().getContentAsString();
+        return JsonPath.read(contentAsString, "$.data.access_token");
     }
 
 }
