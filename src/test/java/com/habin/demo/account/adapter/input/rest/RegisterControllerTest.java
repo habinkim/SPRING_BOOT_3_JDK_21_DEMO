@@ -7,7 +7,6 @@ import com.habin.demo.base.ControllerBaseTest;
 import com.habin.demo.common.config.Uris;
 import com.habin.demo.common.response.MessageCode;
 import com.habin.demo.common.util.StringUtil;
-import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
@@ -17,8 +16,6 @@ import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.UnsupportedEncodingException;
 
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static com.epages.restdocs.apispec.ResourceSnippetParameters.builder;
