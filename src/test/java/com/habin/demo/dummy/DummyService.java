@@ -45,6 +45,12 @@ public class DummyService extends AbstractIntegrationTest {
     private String defaultRefreshToken = null;
 
     @Transactional
+    public void initAndLogin() throws NoSuchAlgorithmException {
+        initUser();
+        login(defaultAccount);
+    }
+
+    @Transactional
     public void initUser() throws NoSuchAlgorithmException {
         defaultUsername = StringUtil.randomAlphanumeric(10, 15);
         defaultPassword = StringUtil.randomAlphaNumericSymbol(15, 20);
