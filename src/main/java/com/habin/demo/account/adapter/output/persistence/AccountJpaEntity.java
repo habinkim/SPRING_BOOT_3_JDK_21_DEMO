@@ -1,6 +1,5 @@
 package com.habin.demo.account.adapter.output.persistence;
 
-import com.habin.demo.common.converter.EncryptConverter;
 import com.habin.demo.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -37,7 +36,7 @@ public class AccountJpaEntity extends BaseEntity implements UserDetails {
     @Column(name = "uuid", nullable = false)
     private String uuid;
 
-//    @Convert(converter = EncryptConverter.class)
+    //    @Convert(converter = EncryptConverter.class)
     @Size(max = 255)
     @Column(name = "username", nullable = false)
     private String username;
@@ -47,12 +46,12 @@ public class AccountJpaEntity extends BaseEntity implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-//    @Convert(converter = EncryptConverter.class)
+    //    @Convert(converter = EncryptConverter.class)
     @NotNull
     @Column(name = "email", nullable = false)
     private String email;
 
-//    @Convert(converter = EncryptConverter.class)
+    //    @Convert(converter = EncryptConverter.class)
     @NotNull
     @Column(name = "nickname", nullable = false)
     private String nickname;

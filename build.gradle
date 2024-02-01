@@ -112,11 +112,14 @@ dependencies {
     testImplementation "com.navercorp.fixturemonkey:fixture-monkey-starter:1.0.12"
 
     testRuntimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    testCompileOnly 'org.projectlombok:lombok'
 
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.testcontainers:mariadb'
     testImplementation 'org.testcontainers:kafka'
     testImplementation 'org.testcontainers:localstack'
+
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 sourceSets {
