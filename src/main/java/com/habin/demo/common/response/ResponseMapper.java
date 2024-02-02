@@ -13,7 +13,7 @@ public class ResponseMapper {
 
     public ResponseEntity<Response<?>> ok() {
         return ResponseEntity.ok().body(
-                new Response<>(MessageCode.SUCCESS.name(), MessageCode.SUCCESS.getCode(), null)
+                new Response<>(messageSourceUtil.getMessage(MessageCode.SUCCESS.getCode()), MessageCode.SUCCESS.getCode(), null)
         );
     }
 
