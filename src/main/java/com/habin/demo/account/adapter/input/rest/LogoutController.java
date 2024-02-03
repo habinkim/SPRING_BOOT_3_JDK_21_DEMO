@@ -29,7 +29,9 @@ public class LogoutController {
     private final ResponseMapper responseMapper;
 
     @PutMapping(value = Uris.LOGOUT)
-    public ResponseEntity<Response<?>> logout(@RequestHeader(value = AUTHORIZATION) String authorizationValue, @CurrentUser final AccountJpaEntity account) {
+    public ResponseEntity<Response<?>> logout(
+            @RequestHeader(value = AUTHORIZATION) String authorizationValue,
+            @CurrentUser final AccountJpaEntity account) {
         if (authorizationValue == null)
             throw new CommonApplicationException(MessageCode.EXCEPTION_AUTHENTICATION_TOKEN_NOT_FOUND);
         String accessToken = StringUtil.removeBearerPrefix(authorizationValue);

@@ -6,10 +6,7 @@ import com.habin.demo.common.exception.CommonApplicationException;
 import com.habin.demo.common.hexagon.PersistenceAdapter;
 import com.habin.demo.common.property.JwtProperty;
 import com.habin.demo.common.response.MessageCode;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -112,8 +109,7 @@ public class JwtTokenPersistenceAdapter implements
 
     @Override // CheckRefreshTokenExpirePort
     public Boolean isRefreshTokenExpired(final String refreshToken) {
-        String username = loadUsernameByToken(refreshToken);
-        return validateJwtExpiration(REFRESH_TOKEN_KEY_PREFIX + username, redisTemplateRefresh);
+        return validateJwtExpiration(refreshToken, redisTemplateRefresh);
     }
 
     @Override // UpdateAccessTokenExpirePort
@@ -149,15 +145,13 @@ public class JwtTokenPersistenceAdapter implements
 
         RefreshToken refreshToken = redisTemplateRefresh.opsForValue().get(refreshTokenKey);
 
-        isRefreshTokenExpired(refreshTokenValue);
-
         if (refreshToken == null && refreshToken.getToken().equals(refreshTokenValue))
             throw new CommonApplicationException(MessageCode.EXCEPTION_AUTHENTICATION_INVALID_TOKEN);
 
         if (isRefreshTokenExpired(refreshToken.getToken()))
             throw new CommonApplicationException(MessageCode.EXCEPTION_EXPIRED_REFRESH_TOKEN);
 
-        SaveJwtToken behavior = new SaveJwtToken(username, getPayload(refreshTokenKey).get("role").toString());
+        SaveJwtToken behavior = new SaveJwtToken(username, getPayload(refreshTokenValue).get("role").toString());
         return createAccessToken(behavior);
     }
 
