@@ -1,6 +1,8 @@
 package com.habin.demo.common.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.habin.demo.account.adapter.output.persistence.jwt.AccessToken;
 import com.habin.demo.account.adapter.output.persistence.jwt.JwtToken;
 import com.habin.demo.account.adapter.output.persistence.jwt.RefreshToken;
@@ -60,8 +62,13 @@ public class RedisConfig {
     }
 
     @Bean
-    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper) {
+        BasicPolymorphicTypeValidator validator = BasicPolymorphicTypeValidator.builder().build();
+        objectMapper.activateDefaultTyping(validator, ObjectMapper.DefaultTyping.NON_FINAL);
+
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                .disableCachingNullValues()
+                .serializeKeysWith(fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(fromSerializer(new GenericJackson2JsonRedisSerializer()))
                 .prefixCacheNameWith("Cache_")
                 .entryTtl(Duration.ofMinutes(30));
