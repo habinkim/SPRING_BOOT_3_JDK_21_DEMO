@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.RedisHash;
 import java.io.Serializable;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 @RedisHash("AccessToken")
 public final class AccessToken implements Serializable, JwtToken {

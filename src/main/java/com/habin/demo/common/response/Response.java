@@ -1,6 +1,10 @@
 package com.habin.demo.common.response;
 
-public record Response<T extends BasePayload>(String message, String code, T data) implements AbstractResponse {
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+public record Response<T extends BasePayload>(String message, String code, @JsonInclude(NON_NULL) T data) implements AbstractResponse {
 
     @Override
     public String getMessage() {
