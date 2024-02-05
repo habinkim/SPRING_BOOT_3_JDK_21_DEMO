@@ -1,5 +1,8 @@
 package com.habin.demo.common.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.habin.demo.account.adapter.output.persistence.jwt.AccessToken;
 import com.habin.demo.account.adapter.output.persistence.jwt.RefreshToken;
 import io.lettuce.core.RedisURI;
@@ -53,8 +56,13 @@ public class RedisConfig {
     }
 
     @Bean
-    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory, ObjectMapper objectMapper) {
+        BasicPolymorphicTypeValidator validator = BasicPolymorphicTypeValidator.builder().build();
+        objectMapper.activateDefaultTyping(validator, ObjectMapper.DefaultTyping.NON_FINAL);
+
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+                .disableCachingNullValues()
+                .serializeKeysWith(fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(fromSerializer(new GenericJackson2JsonRedisSerializer()))
                 .prefixCacheNameWith("Cache_")
                 .entryTtl(Duration.ofMinutes(30));
@@ -66,7 +74,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, AccessToken> redisTemplateForAccessToken() {
+    public RedisTemplate<String, AccessToken> redisTemplateForAccessToken() throws JsonProcessingException {
         RedisTemplate<String, AccessToken> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
@@ -75,7 +83,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, RefreshToken> redisTemplateForRefreshToken() {
+    public RedisTemplate<String, RefreshToken> redisTemplateForRefreshToken() throws JsonProcessingException {
         RedisTemplate<String, RefreshToken> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
@@ -84,14 +92,14 @@ public class RedisConfig {
     }
 
     @Bean
-    public StringRedisTemplate stringRedisTemplate() {
+    public StringRedisTemplate stringRedisTemplate() throws JsonProcessingException {
         StringRedisTemplate redisTemplate = new StringRedisTemplate();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplateForObject() {
+    public RedisTemplate<String, Object> redisTemplateForObject() throws JsonProcessingException {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
