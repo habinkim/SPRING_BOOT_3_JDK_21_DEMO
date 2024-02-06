@@ -49,12 +49,13 @@ dependencies {
     implementation 'com.giffing.bucket4j.spring.boot.starter:bucket4j-spring-boot-starter:0.10.3'
     implementation 'org.redisson:redisson-spring-boot-starter:3.26.0'
     implementation 'org.zalando:logbook-spring-boot-starter:3.7.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1'
 
     // Persistence Layer
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-//    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
-//    implementation 'org.springframework.boot:spring-boot-starter-data-neo4j'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-data-neo4j'
     implementation "io.github.openfeign.querydsl:querydsl-jpa-spring:${queryDslVersion}"
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
     implementation 'org.flywaydb:flyway-core'
@@ -154,7 +155,7 @@ bootRun {
 }
 
 test {
-    systemProperty 'spring.profiles.active', 'test'
+    systemProperty 'spring.profiles.active', 'test_standalone'
     outputs.dir snippetsDir
     useJUnitPlatform()
 }

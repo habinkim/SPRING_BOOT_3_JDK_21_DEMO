@@ -1,5 +1,6 @@
 package com.habin.demo.account.adapter.output.persistence;
 
+import com.habin.demo.common.converter.EncryptConverter;
 import com.habin.demo.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class AccountJpaEntity extends BaseEntity implements UserDetails {
     @Column(name = "uuid", nullable = false)
     private String uuid;
 
-    //    @Convert(converter = EncryptConverter.class)
+    @Convert(converter = EncryptConverter.class)
     @Size(max = 255)
     @Column(name = "username", nullable = false)
     private String username;
@@ -46,19 +48,20 @@ public class AccountJpaEntity extends BaseEntity implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    //    @Convert(converter = EncryptConverter.class)
+    @Convert(converter = EncryptConverter.class)
     @NotNull
     @Column(name = "email", nullable = false)
     private String email;
 
-    //    @Convert(converter = EncryptConverter.class)
+    @Convert(converter = EncryptConverter.class)
     @NotNull
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
+    @Builder.Default
     @Convert(converter = RoleConverter.class)
     @Column(name = "roles", nullable = false)
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
 
     @Column(name = "last_login_at")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
