@@ -17,6 +17,7 @@ public enum MessageCode {
     SUCCESS(HttpStatus.OK, "0000"),
     CREATED(HttpStatus.CREATED, "0001"),
     ACCEPTED(HttpStatus.ACCEPTED, "0002"),
+    TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "9996"),
     NOT_OWNER(HttpStatus.UNAUTHORIZED, "9997"),
     NOT_FOUND_DATA(HttpStatus.BAD_REQUEST, "9998"),
     ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "9999"),

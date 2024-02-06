@@ -1,4 +1,4 @@
-package com.habin.demo.common.aspect;
+package com.habin.demo.common.lock;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Component;

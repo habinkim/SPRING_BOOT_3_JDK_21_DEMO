@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.habin.demo.account.adapter.output.persistence.jwt.AccessToken;
 import com.habin.demo.account.adapter.output.persistence.jwt.RefreshToken;
+import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,11 @@ public class RedisConfig {
         LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisConfiguration);
         lettuceConnectionFactory.afterPropertiesSet();
         return lettuceConnectionFactory;
+    }
+
+    @Bean
+    public RedisClient redisClient() {
+        return RedisClient.create(redisURI());
     }
 
     private RedisURI redisURI() {

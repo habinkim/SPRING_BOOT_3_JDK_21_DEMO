@@ -1,6 +1,7 @@
 package com.habin.demo.common.aspect;
 
 import com.habin.demo.common.exception.CommonApplicationException;
+import com.habin.demo.common.lock.DistributedTransactionMediator;
 import com.habin.demo.common.lock.DistributionLock;
 import com.habin.demo.common.lock.DistributionLockKeyGenerator;
 import com.habin.demo.common.response.MessageCode;

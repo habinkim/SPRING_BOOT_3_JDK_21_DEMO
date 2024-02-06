@@ -17,54 +17,6 @@ import org.springframework.util.StopWatch;
 @RequiredArgsConstructor
 public class LoggingAspect {
 
-    @Pointcut(
-            "within(@org.springframework.stereotype.Repository *)" +
-                    " || within(@org.springframework.stereotype.Service *)" +
-                    " || within(@org.springframework.web.bind.annotation.RestController *)"
-    )
-    public void springBeanPointcut() {
-    }
-
-    @Pointcut(
-            "within(@com.habin.demo.common.hexagon.PersistenceAdapter *)" +
-                    " || within(@com.habin.demo.common.hexagon.UseCase *)" +
-                    " || within(@com.habin.demo.common.hexagon.WebAdapter *)"
-    )
-    public void hexagon() {
-    }
-
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)")
-    public void getApi() {
-    }
-
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.PostMapping)")
-    public void postApi() {
-    }
-
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.PutMapping)")
-    public void putApi() {
-    }
-
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.PatchMapping)")
-    public void patchApi() {
-    }
-
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.DeleteMapping)")
-    public void deleteApi() {
-    }
-
-    @Pointcut("getApi() || postApi() || putApi() || patchApi() || deleteApi()")
-    public void restApi() {
-    }
-
-    @Pointcut("execution(* com.habin.demo.*.adapter.output.persistence.*.*(..))")
-    public void persistence() {
-    }
-
-    @Pointcut("execution(* com.habin.demo.*.application.port.input.usecase.*.*(..))")
-    public void useCase() {
-    }
-
     /**
      * Retrieves the {@link Logger} associated to the given {@link JoinPoint}.
      *
@@ -75,7 +27,7 @@ public class LoggingAspect {
         return LoggerFactory.getLogger(joinPoint.getSignature().getDeclaringTypeName());
     }
 
-    @AfterThrowing(pointcut = "springBeanPointcut()", throwing = "e")
+    @AfterThrowing(pointcut = "com.habin.demo.common.aspect.PointCuts.springBeanPointcut()", throwing = "e")
     public void logAfterThrowing(JoinPoint joinPoint, Exception e) {
         logger(joinPoint)
                 .error(
@@ -86,7 +38,9 @@ public class LoggingAspect {
                 );
     }
 
-    @Around("restApi() || persistence() || useCase()")
+    @Around("com.habin.demo.common.aspect.PointCuts.restApi() " +
+            "|| com.habin.demo.common.aspect.PointCuts.persistence() " +
+            "|| com.habin.demo.common.aspect.PointCuts.useCase()")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         StopWatch stopWatch = new StopWatch("LogExecutionTime Aop");
 
