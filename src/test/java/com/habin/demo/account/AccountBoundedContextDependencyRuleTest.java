@@ -2,7 +2,6 @@ package com.habin.demo.account;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +16,6 @@ public class AccountBoundedContextDependencyRuleTest {
     private static final String SERVICE_PACKAGE = "application.service";
     private static final String ADAPTER_PACKAGE = "adapter";
 
-    @Disabled
     @Test
     @DisplayName("Account Bounded Context satisfied Hexagonal Architecture.")
     void checkDependencyRule() {
@@ -26,7 +24,6 @@ public class AccountBoundedContextDependencyRuleTest {
 
         checkNoDependencyFromTo(DOMAIN_PACKAGE, APPLICATION_PACKAGE, classesToCheck);
 
-        // TODO : 의존성 제거 필요
         checkNoDependencyFromTo(DOMAIN_PACKAGE, ADAPTER_PACKAGE, classesToCheck);
 
         checkNoDependencyFromTo(APPLICATION_PACKAGE, ADAPTER_PACKAGE, classesToCheck);

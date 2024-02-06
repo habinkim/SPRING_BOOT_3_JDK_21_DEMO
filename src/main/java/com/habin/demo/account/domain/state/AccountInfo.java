@@ -1,6 +1,5 @@
 package com.habin.demo.account.domain.state;
 
-import com.habin.demo.account.adapter.output.persistence.Role;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -14,5 +13,5 @@ public record AccountInfo(
         LocalDateTime createdAt,
         @NotNull @Size(max = 255) String uuid,
         @Size(max = 255) String username,
-        List<Role> roles) {
+        List<String> roles) {
 }

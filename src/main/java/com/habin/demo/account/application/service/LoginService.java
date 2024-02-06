@@ -43,9 +43,7 @@ public class LoginService implements LoginUseCase {
         if (!passwordEncoder.matches(command.password(), registeredAccountInfo.password()))
             throw new CommonApplicationException(ACCOUNT_NOT_FOUND);
 
-        String authorities = registeredAccountInfo.roles().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+        String authorities = String.join(",", registeredAccountInfo.roles());
 
         SaveJwtToken saveJwtToken = new SaveJwtToken(registeredAccountInfo.username(), authorities);
 

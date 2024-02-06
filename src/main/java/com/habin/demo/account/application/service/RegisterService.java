@@ -48,9 +48,7 @@ public class RegisterService implements RegisterUseCase {
                 command.email(), command.nickname());
         AccountInfo savedAccount = saveAccountPort.saveAccount(saveAccount);
 
-        String authorities = savedAccount.roles().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+        String authorities = String.join(",", savedAccount.roles());
 
         SaveJwtToken saveJwtToken = new SaveJwtToken(savedAccount.username(), authorities);
 

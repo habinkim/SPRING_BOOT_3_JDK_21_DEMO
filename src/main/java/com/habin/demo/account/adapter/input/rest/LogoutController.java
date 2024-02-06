@@ -1,6 +1,5 @@
 package com.habin.demo.account.adapter.input.rest;
 
-import com.habin.demo.account.adapter.output.persistence.AccountJpaEntity;
 import com.habin.demo.account.application.port.input.usecase.LogoutUseCase;
 import com.habin.demo.account.domain.state.CurrentUser;
 import com.habin.demo.common.config.Uris;
