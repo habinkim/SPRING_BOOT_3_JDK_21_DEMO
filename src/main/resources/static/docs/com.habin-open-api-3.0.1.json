@@ -1,0 +1,305 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Demo REST API Documentation",
+    "description" : "Spring REST Docs with SwaggerUI.",
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "http://localhost:8080"
+  } ],
+  "tags" : [ ],
+  "paths" : {
+    "/v1/login" : {
+      "post" : {
+        "tags" : [ "v1" ],
+        "summary" : "회원가입",
+        "description" : "회원가입",
+        "operationId" : "login-success",
+        "requestBody" : {
+          "content" : {
+            "application/json;charset=UTF-8" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/v1-login-434021498"
+              },
+              "examples" : {
+                "login-success" : {
+                  "value" : "{\n  \"username\" : \"rSfh4cz5QP\",\n  \"password\" : \"Jey4awrx53DpJcq\"\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/v1-login-985494254"
+                },
+                "examples" : {
+                  "login-success" : {
+                    "value" : "{\n  \"message\" : \"요청이 성공적으로 처리되었습니다.\",\n  \"code\" : \"0000\",\n  \"data\" : {\n    \"username\" : \"rSfh4cz5QP\",\n    \"roles\" : [ \"CLIENT_0\" ],\n    \"access_token\" : \"eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9DTElFTlRfMCIsInRva2VuVHlwZSI6IkJlYXJlciIsImp0aSI6ImZhZDk2YTc2LTgyNzUtNDUyYi1hYWQzLTUyYzg0NmE3ZGYwNSIsInN1YiI6InJTZmg0Y3o1UVAiLCJpYXQiOjE3MDcxNzk0MjksIm5iZiI6MTcwNzE3OTQyOSwiZXhwIjoxNzA3MTc5NjA5fQ.1DZ2FyIVQ_29W4pzK1WVDexi6BFhNaeMImYbYOMZtegIo96JXyBQnhylNV2rsZ9_fBCC3OUxnI_dLcnBFMbqxQ\",\n    \"refresh_token\" : \"eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9DTElFTlRfMCIsInRva2VuVHlwZSI6IkJlYXJlciIsImp0aSI6IjNiNTVlZDRiLTNhMjktNGY5MC04N2M2LTQxZjUzM2RhMzRlMiIsInN1YiI6InJTZmg0Y3o1UVAiLCJpYXQiOjE3MDcxNzk0MjksIm5iZiI6MTcwNzE3OTQyOSwiZXhwIjoxNzA5NzcxNDI5fQ.XY1_aOWogw3NNpX9zIX6qvDXFmj5giV6KbYvx8U4drD41kSiZ8-qoLYtUuMr5zQTQrO7U2f7sXZUl7qwGOh9zQ\"\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/logout" : {
+      "put" : {
+        "tags" : [ "v1" ],
+        "summary" : "로그아웃",
+        "description" : "로그아웃",
+        "operationId" : "logout-success",
+        "parameters" : [ {
+          "name" : "Authorization",
+          "in" : "header",
+          "description" : "AccessToken \"Bearer \" prefix",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "example" : "Bearer eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9DTElFTlRfMCIsInRva2VuVHlwZSI6IkJlYXJlciIsImp0aSI6ImIyOTBhY2EzLTM5OTItNGYwYi1hNDc0LWMzMjM3ZTZmMzhlMSIsInN1YiI6Im12RDcyb2Z4RXgiLCJpYXQiOjE3MDcxNzk0MjksIm5iZiI6MTcwNzE3OTQyOSwiZXhwIjoxNzA3MTc5NjA5fQ.glH08PsGmUHJmOsarMo63P1n4_D-U8kwyEDpFQnMUZfKZ6UXPlPcXzEHidohTdnCA7csvGruLX3hTvlG1h0Pig"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/v1-logout-640416564"
+                },
+                "examples" : {
+                  "logout-success" : {
+                    "value" : "{\n  \"message\" : \"요청이 성공적으로 처리되었습니다.\",\n  \"code\" : \"0000\"\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuthJWT" : [ ]
+        } ]
+      }
+    },
+    "/v1/refresh" : {
+      "post" : {
+        "tags" : [ "v1" ],
+        "summary" : "Access Token 재발급",
+        "description" : "Access Token 재발급",
+        "operationId" : "refresh-success",
+        "requestBody" : {
+          "content" : {
+            "application/json;charset=UTF-8" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/v1-refresh351339704"
+              },
+              "examples" : {
+                "refresh-success" : {
+                  "value" : "{\n  \"refreshToken\" : \"eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9DTElFTlRfMCIsInRva2VuVHlwZSI6IkJlYXJlciIsImp0aSI6IjNkZmE5YzZiLTE4NWYtNGYzZC04NmIzLTdlNjg2Mjc1Yjk3MSIsInN1YiI6ImFZcWxNMUtCbUtveHciLCJpYXQiOjE3MDcxNzk0MjksIm5iZiI6MTcwNzE3OTQyOSwiZXhwIjoxNzA5NzcxNDI5fQ.AxdV4-CfeVToJdjJuL7eJ9KJSrBByvwcaGvp_A3mJ7ut6yEJw_BUcDuUkYhAfRmKxP5TX_iejr-R_KPR4zntXQ\"\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/v1-refresh1697318922"
+                },
+                "examples" : {
+                  "refresh-success" : {
+                    "value" : "{\n  \"message\" : \"요청이 성공적으로 처리되었습니다.\",\n  \"code\" : \"0000\",\n  \"data\" : {\n    \"access_token\" : \"eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9DTElFTlRfMCIsInRva2VuVHlwZSI6IkJlYXJlciIsImp0aSI6IjNjOTg1MmQ4LWY0OGYtNDc1OC04OWU5LWJiNjZhMTZjMGY1ZCIsInN1YiI6ImFZcWxNMUtCbUtveHciLCJpYXQiOjE3MDcxNzk0MjksIm5iZiI6MTcwNzE3OTQyOSwiZXhwIjoxNzA3MTc5NjA5fQ.4qA5KkgHtPCu57s8PupcO1Z89t9Tt7jP85ghRlUmfaBQIJaNuoqAozQxYGeZiXIjAOBQ8No15f-FaNSrVMfPkQ\"\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/register" : {
+      "post" : {
+        "tags" : [ "v1" ],
+        "summary" : "회원가입",
+        "description" : "회원가입",
+        "operationId" : "register-success",
+        "requestBody" : {
+          "content" : {
+            "application/json;charset=UTF-8" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/v1-register1141845647"
+              },
+              "examples" : {
+                "register-success" : {
+                  "value" : "{\n  \"username\" : \"knhQCQGXLm\",\n  \"password\" : \"EMvX6iTn5udy3jGcuC6\",\n  \"email\" : \"KluWmvo@lyzKV.com\",\n  \"nickname\" : \"lccYG\"\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "200",
+            "content" : {
+              "application/json;charset=UTF-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/v1-login-985494254"
+                },
+                "examples" : {
+                  "register-success" : {
+                    "value" : "{\n  \"message\" : \"요청이 성공적으로 처리되었습니다.\",\n  \"code\" : \"0000\",\n  \"data\" : {\n    \"username\" : \"knhQCQGXLm\",\n    \"roles\" : [ \"CLIENT_0\" ],\n    \"access_token\" : \"eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9DTElFTlRfMCIsInRva2VuVHlwZSI6IkJlYXJlciIsImp0aSI6IjgxMzc5OGIxLTMwM2UtNDkzZi1hMzYxLTFjNzVhYjRhM2E4OCIsInN1YiI6ImtuaFFDUUdYTG0iLCJpYXQiOjE3MDcxNzk0MzAsIm5iZiI6MTcwNzE3OTQzMCwiZXhwIjoxNzA3MTc5NjEwfQ.wlNnzAj7zLwdo0ZnCkRYxcnWk12kxQVUTBn2GR8lx2Jet4sqFVNIF0Lmgd0dmL0JpKViCKW3M11F5D_jV9iY4g\",\n    \"refresh_token\" : \"eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiUk9MRV9DTElFTlRfMCIsInRva2VuVHlwZSI6IkJlYXJlciIsImp0aSI6IjcyMmZkMmQ0LTVhMmItNDMyMy04NTE5LThlNjM5YmZhM2UxMCIsInN1YiI6ImtuaFFDUUdYTG0iLCJpYXQiOjE3MDcxNzk0MzAsIm5iZiI6MTcwNzE3OTQzMCwiZXhwIjoxNzA5NzcxNDMwfQ.HYgNUNjiq3R3fTLdZac3Fl1MzKgUc3eAPXAmu-SlS4lr4IIHNqQfcrEv-krVt2SEd071ZzJu_vpet6mo66vqoQ\"\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "v1-login-985494254" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "access_token" : {
+                "type" : "string",
+                "description" : "Access Token"
+              },
+              "refresh_token" : {
+                "type" : "string",
+                "description" : "Refresh Token"
+              },
+              "roles" : {
+                "type" : "array",
+                "description" : "권한",
+                "items" : {
+                  "oneOf" : [ {
+                    "type" : "object"
+                  }, {
+                    "type" : "boolean"
+                  }, {
+                    "type" : "string"
+                  }, {
+                    "type" : "number"
+                  } ]
+                }
+              },
+              "username" : {
+                "type" : "string",
+                "description" : "아이디"
+              }
+            },
+            "description" : "데이터"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "시스템 메시지"
+          }
+        }
+      },
+      "v1-register1141845647" : {
+        "type" : "object",
+        "properties" : {
+          "password" : {
+            "type" : "string",
+            "description" : "비밀번호"
+          },
+          "nickname" : {
+            "type" : "string",
+            "description" : "닉네임"
+          },
+          "email" : {
+            "type" : "string",
+            "description" : "이메일"
+          },
+          "username" : {
+            "type" : "string",
+            "description" : "아이디"
+          }
+        }
+      },
+      "v1-refresh1697318922" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "상태 코드"
+          },
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "access_token" : {
+                "type" : "string",
+                "description" : "Access Token"
+              }
+            },
+            "description" : "Response Data"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "시스템 메시지"
+          }
+        }
+      },
+      "v1-login-434021498" : {
+        "type" : "object",
+        "properties" : {
+          "password" : {
+            "type" : "string",
+            "description" : "비밀번호"
+          },
+          "username" : {
+            "type" : "string",
+            "description" : "아이디"
+          }
+        }
+      },
+      "v1-logout-640416564" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "상태 코드"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "시스템 메시지"
+          }
+        }
+      },
+      "v1-refresh351339704" : {
+        "type" : "object",
+        "properties" : {
+          "refreshToken" : {
+            "type" : "string",
+            "description" : "Refresh Token"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "bearerAuthJWT" : {
+        "type" : "http",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT"
+      }
+    }
+  }
+}
