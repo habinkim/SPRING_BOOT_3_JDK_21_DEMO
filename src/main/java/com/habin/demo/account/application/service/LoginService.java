@@ -7,18 +7,14 @@ import com.habin.demo.account.application.port.output.RecordLastLoginAtPort;
 import com.habin.demo.account.application.port.output.jwt.CreateAccessTokenPort;
 import com.habin.demo.account.application.port.output.jwt.CreateRefreshTokenPort;
 import com.habin.demo.account.domain.behavior.SaveJwtToken;
-import com.habin.demo.account.domain.state.AccountInfo;
 import com.habin.demo.account.domain.state.LoginResult;
-import com.habin.demo.account.domain.state.RegisteredAccountInfo;
+import com.habin.demo.account.domain.state.RegisteredAccount;
 import com.habin.demo.common.exception.CommonApplicationException;
 import com.habin.demo.common.hexagon.UseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.stream.Collectors;
 
 import static com.habin.demo.common.response.MessageCode.ACCOUNT_NOT_FOUND;
 
@@ -37,21 +33,21 @@ public class LoginService implements LoginUseCase {
     @Override
     @Transactional
     public LoginResult login(final AccountCommands.Login command) {
-        RegisteredAccountInfo registeredAccountInfo = loadAccountPort.registeredAccountInfo(command.username())
+        RegisteredAccount registeredAccount = loadAccountPort.registeredAccountInfo(command.username())
                 .orElseThrow(() -> new CommonApplicationException(ACCOUNT_NOT_FOUND));
 
-        if (!passwordEncoder.matches(command.password(), registeredAccountInfo.password()))
+        if (!passwordEncoder.matches(command.password(), registeredAccount.password()))
             throw new CommonApplicationException(ACCOUNT_NOT_FOUND);
 
-        String authorities = String.join(",", registeredAccountInfo.roles());
+        String authorities = String.join(",", registeredAccount.roles());
 
-        SaveJwtToken saveJwtToken = new SaveJwtToken(registeredAccountInfo.username(), authorities);
+        SaveJwtToken saveJwtToken = new SaveJwtToken(registeredAccount.username(), authorities);
 
         String accessToken = createAccessTokenPort.createAccessToken(saveJwtToken);
         String refreshToken = createRefreshTokenPort.createRefreshToken(saveJwtToken);
 
-        recordLastLoginAtPort.recordLastLoginAt(registeredAccountInfo.username());
+        recordLastLoginAtPort.recordLastLoginAt(registeredAccount.username());
 
-        return new LoginResult(registeredAccountInfo.username(), registeredAccountInfo.roles(), accessToken, refreshToken);
+        return new LoginResult(registeredAccount.username(), registeredAccount.roles(), accessToken, refreshToken);
     }
 }

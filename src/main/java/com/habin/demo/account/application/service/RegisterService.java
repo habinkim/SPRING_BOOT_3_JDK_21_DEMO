@@ -8,18 +8,15 @@ import com.habin.demo.account.application.port.output.jwt.CreateAccessTokenPort;
 import com.habin.demo.account.application.port.output.jwt.CreateRefreshTokenPort;
 import com.habin.demo.account.domain.behavior.SaveAccount;
 import com.habin.demo.account.domain.behavior.SaveJwtToken;
-import com.habin.demo.account.domain.state.AccountInfo;
+import com.habin.demo.account.domain.state.CurrentAccount;
 import com.habin.demo.account.domain.state.RegisterResult;
 import com.habin.demo.common.exception.CommonApplicationException;
 import com.habin.demo.common.hexagon.UseCase;
 import com.habin.demo.common.util.StringUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.stream.Collectors;
 
 import static com.habin.demo.common.response.MessageCode.USER_POLICY_ACCOUNT_REGISTERED;
 
@@ -46,7 +43,7 @@ public class RegisterService implements RegisterUseCase {
         SaveAccount saveAccount = new SaveAccount(
                 StringUtil.uuid(), command.username(), encodedPassword,
                 command.email(), command.nickname());
-        AccountInfo savedAccount = saveAccountPort.saveAccount(saveAccount);
+        CurrentAccount savedAccount = saveAccountPort.saveAccount(saveAccount);
 
         String authorities = String.join(",", savedAccount.roles());
 

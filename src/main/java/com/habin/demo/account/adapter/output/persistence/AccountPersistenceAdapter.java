@@ -4,8 +4,8 @@ import com.habin.demo.account.application.port.output.LoadAccountPort;
 import com.habin.demo.account.application.port.output.RecordLastLoginAtPort;
 import com.habin.demo.account.application.port.output.SaveAccountPort;
 import com.habin.demo.account.domain.behavior.SaveAccount;
-import com.habin.demo.account.domain.state.AccountInfo;
-import com.habin.demo.account.domain.state.RegisteredAccountInfo;
+import com.habin.demo.account.domain.state.CurrentAccount;
+import com.habin.demo.account.domain.state.RegisteredAccount;
 import com.habin.demo.common.hexagon.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -34,14 +34,14 @@ public class AccountPersistenceAdapter implements
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<AccountInfo> accountInfo(String username) {
+    public Optional<CurrentAccount> accountInfo(String username) {
         return loadAccountByUsername(username)
                 .map(accountMapper::accountInfo);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<RegisteredAccountInfo> registeredAccountInfo(String username) {
+    public Optional<RegisteredAccount> registeredAccountInfo(String username) {
         return loadAccountByUsername(username)
                 .map(accountMapper::registeredAccountInfo);
     }
@@ -64,7 +64,7 @@ public class AccountPersistenceAdapter implements
 
     @Override
     @Transactional
-    public AccountInfo saveAccount(SaveAccount saveAccount) {
+    public CurrentAccount saveAccount(SaveAccount saveAccount) {
         AccountJpaEntity saved = accountRepository.save(accountMapper.fromSaveAccountValue(saveAccount));
         return accountMapper.accountInfo(saved);
     }
