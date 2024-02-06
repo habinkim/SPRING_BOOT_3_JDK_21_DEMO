@@ -49,7 +49,6 @@ dependencies {
     implementation 'com.giffing.bucket4j.spring.boot.starter:bucket4j-spring-boot-starter:0.10.3'
     implementation 'org.redisson:redisson-spring-boot-starter:3.26.0'
     implementation 'org.zalando:logbook-spring-boot-starter:3.7.2'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1'
 
     // Persistence Layer
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
