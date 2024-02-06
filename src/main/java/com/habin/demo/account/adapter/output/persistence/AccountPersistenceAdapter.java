@@ -3,14 +3,13 @@ package com.habin.demo.account.adapter.output.persistence;
 import com.habin.demo.account.application.port.output.LoadAccountPort;
 import com.habin.demo.account.application.port.output.RecordLastLoginAtPort;
 import com.habin.demo.account.application.port.output.SaveAccountPort;
-import com.habin.demo.account.domain.state.CustomUser;
-import com.habin.demo.account.domain.state.AccountInfo;
 import com.habin.demo.account.domain.behavior.SaveAccount;
+import com.habin.demo.account.domain.state.AccountInfo;
 import com.habin.demo.account.domain.state.RegisteredAccountInfo;
 import com.habin.demo.common.hexagon.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -28,9 +27,9 @@ public class AccountPersistenceAdapter implements
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<CustomUser> loadCustomUserByUsername(String username) {
+    public Optional<User> loadCustomUserByUsername(String username) {
         return loadAccountByUsername(username)
-                .map(CustomUser::new);
+                .map(account -> new User(account.getUsername(), account.getPassword(), account.getAuthorities()));
     }
 
     @Override

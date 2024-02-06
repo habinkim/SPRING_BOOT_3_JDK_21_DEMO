@@ -7,13 +7,13 @@ import com.habin.demo.account.application.port.input.command.AccountCommands;
 import com.habin.demo.account.application.port.input.usecase.RegisterUseCase;
 import com.habin.demo.account.application.port.input.usecase.jwt.GenerateAccessTokenUseCase;
 import com.habin.demo.account.application.port.input.usecase.jwt.GenerateRefreshTokenUseCase;
-import com.habin.demo.account.domain.state.CustomUser;
 import com.habin.demo.base.AbstractIntegrationTest;
 import com.habin.demo.common.util.StringUtil;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,9 +70,9 @@ public class DummyService extends AbstractIntegrationTest {
         defaultAccessToken = generateAccessTokenUseCase.generateAccessToken(account);
         defaultRefreshToken = generateRefreshTokenUseCase.generateRefreshToken(account);
 
-        CustomUser customUser = new CustomUser(account);
+        User user = new User(account.getUsername(), account.getPassword(), account.getAuthorities());
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(customUser, null, customUser.getAuthorities());
+                new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
