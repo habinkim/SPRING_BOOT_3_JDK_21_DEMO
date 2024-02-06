@@ -75,7 +75,7 @@ class LoginControllerTest extends ControllerBaseTest {
                         requestFields(requestDescriptors), responseFields(responseDescriptors),
                         resource(
                                 builder().
-                                        description("회원가입").
+                                        description("로그인").
                                         requestFields(requestDescriptors).
                                         responseFields(responseDescriptors)
                                         .build()
