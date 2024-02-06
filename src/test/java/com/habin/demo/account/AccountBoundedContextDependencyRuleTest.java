@@ -25,6 +25,8 @@ public class AccountBoundedContextDependencyRuleTest {
         JavaClasses classesToCheck = new ClassFileImporter().importPackages(importPackages);
 
         checkNoDependencyFromTo(DOMAIN_PACKAGE, APPLICATION_PACKAGE, classesToCheck);
+
+        // TODO : 의존성 제거 필요
         checkNoDependencyFromTo(DOMAIN_PACKAGE, ADAPTER_PACKAGE, classesToCheck);
 
         checkNoDependencyFromTo(APPLICATION_PACKAGE, ADAPTER_PACKAGE, classesToCheck);
